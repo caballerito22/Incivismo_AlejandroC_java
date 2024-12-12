@@ -36,6 +36,21 @@ public class HomeFragment extends Fragment {
 
         final TextView textView = binding.localitzacio;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        locationPermissionRequest = registerForActivityResult(new ActivityResultContracts
+                        .RequestMultiplePermissions(), result -> {
+                    Boolean fineLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_FINE_LOCATION, false);
+                    Boolean coarseLocationGranted = result.getOrDefault(
+                            Manifest.permission.ACCESS_COARSE_LOCATION, false);
+                    if (fineLocationGranted != null && fineLocationGranted) {
+                        getLocation();
+                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
+                        getLocation();
+                    } else {
+                        Toast.makeText(requireContext(), "No concedeixen permisos", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
         return root;
     }
 
