@@ -2,7 +2,14 @@ package com.example.incivismo_alejandroc_java.ui.home;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +24,33 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.incivismo_alejandroc_java.databinding.FragmentHomeBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
 
+    private ActivityResultLauncher <String[]> locationPermissionRequest;
     private FragmentHomeBinding binding;
+    private Location mLastLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     //lo ponco para que el locationPermissionRequest de getLocation no de error
-    ActivityResultLauncher<String[]> locationPermissionRequest = null;
+    //ActivityResultLauncher<String[]> locationPermissionRequest = null;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -66,7 +87,72 @@ public class HomeFragment extends Fragment {
             });
         } else {
             Toast.makeText(requireContext(), "getLocation: permissions granted", Toast.LENGTH_SHORT).show();
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(
+                    location -> {
+                        if (location != null) {
+                            fetchAddress(location);
+                        } else {
+                            binding.localitzacio.setText("Sense localització coneguda");
+                        }
+                    });
         }
+        binding.localitzacio.setText("Carregant...");
+    }
+
+    private void fetchAddress(Location location) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        Geocoder geocoder = new Geocoder(requireContext(),
+                Locale.getDefault());
+
+        executor.execute(() -> {
+            // Aquest codi s'executa en segon pla
+            List<Address> addresses = null;
+            String resultMessage = "";
+
+            try {
+                addresses = geocoder.getFromLocation(
+                        location.getLatitude(),
+                        location.getLongitude(),
+                        // En aquest cas, sols volem una única adreça:
+                        1);
+
+
+                if (addresses == null || addresses.size() == 0) {
+                    if (resultMessage.isEmpty()) {
+                        resultMessage = "No s'ha trobat cap adreça";
+                        Log.e("INCIVISME", resultMessage);
+                    }
+                } else {
+                    Address address = addresses.get(0);
+                    ArrayList<String> addressParts = new ArrayList<>();
+
+                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                        addressParts.add(address.getAddressLine(i));
+                    }
+
+                    resultMessage = TextUtils.join("\n", addressParts);
+                    String finalResultMessage = resultMessage;
+                    handler.post(() -> {
+                        // Aquest codi s'executa en primer pla.
+                        binding.localitzacio.setText(String.format(
+                                "Direcció: %1$s \n Hora: %2$tr",
+                                finalResultMessage, System.currentTimeMillis()));
+                    });
+                }
+
+            } catch (IOException ioException) {
+                resultMessage = "Servei no disponible";
+                Log.e("INCIVISME", resultMessage, ioException);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                resultMessage = "Coordenades no vàlides";
+                Log.e("INCIVISME", resultMessage + ". " +
+                        "Latitude = " + location.getLatitude() +
+                        ", Longitude = " +
+                        location.getLongitude(), illegalArgumentException);
+            }
+        });
     }
 
 
