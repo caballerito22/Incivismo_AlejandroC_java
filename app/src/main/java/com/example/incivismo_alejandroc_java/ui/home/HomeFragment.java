@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
     private Location mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    //lo ponco para que el locationPermissionRequest de getLocation no de error
+    //lo pongo para que el locationPermissionRequest de getLocation no de error
     //ActivityResultLauncher<String[]> locationPermissionRequest = null;
 
 
