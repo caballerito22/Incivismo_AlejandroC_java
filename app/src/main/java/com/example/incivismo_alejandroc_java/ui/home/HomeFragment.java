@@ -52,52 +52,33 @@ public class HomeFragment extends Fragment {
     private LocationCallback mLocationCallback;
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.localitzacio;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        HomeViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
 
-        locationPermissionRequest = registerForActivityResult(new ActivityResultContracts
-                        .RequestMultiplePermissions(), result -> {
-                    Boolean fineLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_FINE_LOCATION, false);
-                    Boolean coarseLocationGranted = result.getOrDefault(
-                            Manifest.permission.ACCESS_COARSE_LOCATION, false);
-                    if (fineLocationGranted != null && fineLocationGranted) {
-                        getLocation();
-                    } else if (coarseLocationGranted != null && coarseLocationGranted) {
-                        getLocation();
-                    } else {
-                        Toast.makeText(requireContext(), "No concedeixen permisos", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (mTrackingLocation) {
-                    fetchAddress(locationResult.getLastLocation());
-                }
-            }
-        };
+        HomeViewModel.getCurrentAddress().observe(getViewLifecycleOwner(), address -> {
+            binding.localitzacio.setText(String.format(
+                    "Direcció: %1$s \n Hora: %2$tr",
+                    address, System.currentTimeMillis()));
+        });
+        sharedViewModel.getButtonText().observe(getViewLifecycleOwner(), s -> binding.buttonLocation.setText(s));
+        sharedViewModel.getProgressBar().observe(getViewLifecycleOwner(), visible -> {
+            if (visible)
+                binding.localitzacio.setVisibility(ProgressBar.VISIBLE);
+            else
+                binding.localitzacio.setVisibility(ProgressBar.INVISIBLE);
+        });
 
-        binding.buttonLocation.setOnClickListener((View clickedView) -> {
-            if (!mTrackingLocation) {
-                startTrackingLocation();
-            } else {
-                stopTrackingLocation();
-            }
+        binding.buttonLocation.setOnClickListener(view -> {
+            Log.d("DEBUG", "Clicked Get Location");
+            sharedViewModel.switchTrackingLocation();
         });
 
         return root;
-
     }
 
     private void startTrackingLocation() {
