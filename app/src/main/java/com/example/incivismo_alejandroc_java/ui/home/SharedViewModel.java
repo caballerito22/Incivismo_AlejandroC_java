@@ -1,5 +1,6 @@
 package com.example.incivismo_alejandroc_java.ui.home;
 
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.location.Address;
@@ -10,16 +11,19 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.firebase.auth.FirebaseUser;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,34 +40,43 @@ public class SharedViewModel extends AndroidViewModel {
     private final MutableLiveData<String> buttonText = new MutableLiveData<>();
     private final MutableLiveData<Boolean> progressBar = new MutableLiveData<>();
 
+
     private boolean mTrackingLocation;
     FusedLocationProviderClient mFusedLocationClient;
+
 
     public SharedViewModel(@NonNull Application application) {
         super(application);
 
+
         this.app = application;
     }
+
 
     public void setFusedLocationClient(FusedLocationProviderClient mFusedLocationClient) {
         this.mFusedLocationClient = mFusedLocationClient;
     }
 
+
     public static LiveData<String> getCurrentAddress() {
         return currentAddress;
     }
+
 
     public MutableLiveData<String> getButtonText() {
         return buttonText;
     }
 
+
     public MutableLiveData<Boolean> getProgressBar() {
         return progressBar;
     }
 
+
     public LiveData<String> getCheckPermission() {
         return checkPermission;
     }
+
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -74,6 +87,7 @@ public class SharedViewModel extends AndroidViewModel {
         }
     };
 
+
     private LocationRequest getLocationRequest() {
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
@@ -82,6 +96,7 @@ public class SharedViewModel extends AndroidViewModel {
         return locationRequest;
     }
 
+
     public void switchTrackingLocation() {
         if (!mTrackingLocation) {
             startTrackingLocation(true);
@@ -89,7 +104,9 @@ public class SharedViewModel extends AndroidViewModel {
             stopTrackingLocation();
         }
 
+
     }
+
 
     @SuppressLint("MissingPermission")
     public void startTrackingLocation(boolean needsChecking) {
@@ -101,13 +118,17 @@ public class SharedViewModel extends AndroidViewModel {
                     mLocationCallback, null
             );
 
+
             currentAddress.postValue("Carregant...");
+
 
             progressBar.postValue(true);
             mTrackingLocation = true;
             buttonText.setValue("Aturar el seguiment de la ubicació");
         }
     }
+
+
 
 
     private void stopTrackingLocation() {
@@ -119,21 +140,27 @@ public class SharedViewModel extends AndroidViewModel {
         }
     }
 
+
     private void fetchAddress(Location location) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
+
         Geocoder geocoder = new Geocoder(app.getApplicationContext(), Locale.getDefault());
+
 
         executor.execute(() -> {
             // Aquest codi s'executa en segon pla
             List<Address> addresses = null;
             String resultMessage = "";
 
+
             try {
                 addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),
                         // En aquest cas, sols volem una única adreça:
                         1);
+
+
 
 
                 if (addresses == null || addresses.size() == 0) {
@@ -145,9 +172,11 @@ public class SharedViewModel extends AndroidViewModel {
                     Address address = addresses.get(0);
                     ArrayList<String> addressParts = new ArrayList<>();
 
+
                     for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
                         addressParts.add(address.getAddressLine(i));
                     }
+
 
                     resultMessage = TextUtils.join("\n", addressParts);
                     String finalResultMessage = resultMessage;
@@ -158,6 +187,7 @@ public class SharedViewModel extends AndroidViewModel {
                     });
                 }
 
+
             } catch (IOException ioException) {
                 resultMessage = "Servei no disponible";
                 Log.e("INCIVISME", resultMessage, ioException);
@@ -166,20 +196,24 @@ public class SharedViewModel extends AndroidViewModel {
                 Log.e("INCIVISME", resultMessage + ". " + "Latitude = " + location.getLatitude() + ", Longitude = " + location.getLongitude(), illegalArgumentException);
             }
         });
-
     }
-
     private MutableLiveData<FirebaseUser> user = new MutableLiveData<>();;
+
 
     public LiveData<FirebaseUser> getUser() {
         return user;
     }
 
+
     public void setUser(FirebaseUser passedUser) {
         user.postValue(passedUser);
     }
 
+
+
+
 }
+
 
 
 

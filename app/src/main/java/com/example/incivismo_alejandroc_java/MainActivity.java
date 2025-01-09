@@ -1,6 +1,7 @@
 package com.example.incivismo_alejandroc_java;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,15 +20,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.incivismo_alejandroc_java.databinding.ActivityMainBinding;
 import com.example.incivismo_alejandroc_java.ui.home.SharedViewModel;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ActivityResultLauncher<String[]> locationPermissionRequest;
     private SharedViewModel sharedViewModel;
+    private ActivityResultLauncher<Intent> signInLauncher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "No concedeixen permisos", Toast.LENGTH_SHORT).show();
             }
         });
+        signInLauncher = registerForActivityResult(
+                new FirebaseAuthUIActivityResultContract(),
+                (result) -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        sharedViewModel.setUser(user);
+                    }
+                });
+
     }
 
     void checkPermission() {
