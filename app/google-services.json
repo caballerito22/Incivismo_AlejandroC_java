@@ -12,7 +12,12 @@
           "package_name": "com.example.incivismo_alejandroc_java"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "23599430590-bsqsa7fk7gm9q79akteoq23mfonn2crm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCUjBj1M8v9Whsw1aNFb2CGyybzswZh6M4"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23599430590-bsqsa7fk7gm9q79akteoq23mfonn2crm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

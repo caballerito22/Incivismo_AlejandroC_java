@@ -20,12 +20,15 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.incivismo_alejandroc_java.databinding.ActivityMainBinding;
 import com.example.incivismo_alejandroc_java.ui.home.SharedViewModel;
+import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -96,4 +99,29 @@ public class MainActivity extends AppCompatActivity {
             sharedViewModel.startTrackingLocation(false);
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        Log.e("XXXX", String.valueOf(auth.getCurrentUser()));
+        if (auth.getCurrentUser() == null) {
+            Intent signInIntent =
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
+                            .setAvailableProviders(
+                                    Arrays.asList(
+                                            new AuthUI.IdpConfig.EmailBuilder().build(),
+                                            new AuthUI.IdpConfig.GoogleBuilder().build()
+                                    )
+                            )
+                            .build();
+            signInLauncher.launch(signInIntent);
+        } else {
+            sharedViewModel.setUser(auth.getCurrentUser());
+        }
+    }
+
 }
