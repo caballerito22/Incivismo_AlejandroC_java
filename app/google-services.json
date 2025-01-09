@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "23599430590",
+    "project_id": "incivismo-alejandroc-java",
+    "storage_bucket": "incivismo-alejandroc-java.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23599430590:android:c68dc9f711eb1f280e17ef",
+        "android_client_info": {
+          "package_name": "com.example.incivismo_alejandroc_java"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUjBj1M8v9Whsw1aNFb2CGyybzswZh6M4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -15,11 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -29,8 +27,6 @@ import com.example.incivismo_alejandroc_java.databinding.FragmentHomeBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,14 +49,14 @@ public class HomeFragment extends Fragment {
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        SharedViewModel homeViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        HomeViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
+        SharedViewModel sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
-        HomeViewModel.getCurrentAddress().observe(getViewLifecycleOwner(), address -> {
+        SharedViewModel.getCurrentAddress().observe(getViewLifecycleOwner(), address -> {
             binding.localitzacio.setText(String.format(
                     "Direcció: %1$s \n Hora: %2$tr",
                     address, System.currentTimeMillis()));

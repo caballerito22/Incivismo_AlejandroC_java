@@ -14,12 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +28,8 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HomeViewModel extends AndroidViewModel {
+
+public class SharedViewModel extends AndroidViewModel {
     private final Application app;
     private static final MutableLiveData<String> currentAddress = new MutableLiveData<>();
     private final MutableLiveData<String> checkPermission = new MutableLiveData<>();
@@ -38,13 +39,13 @@ public class HomeViewModel extends AndroidViewModel {
     private boolean mTrackingLocation;
     FusedLocationProviderClient mFusedLocationClient;
 
-    public HomeViewModel(@NonNull Application application) {
+    public SharedViewModel(@NonNull Application application) {
         super(application);
 
         this.app = application;
     }
 
-    void setFusedLocationClient(FusedLocationProviderClient mFusedLocationClient) {
+    public void setFusedLocationClient(FusedLocationProviderClient mFusedLocationClient) {
         this.mFusedLocationClient = mFusedLocationClient;
     }
 
@@ -60,7 +61,7 @@ public class HomeViewModel extends AndroidViewModel {
         return progressBar;
     }
 
-    LiveData<String> getCheckPermission() {
+    public LiveData<String> getCheckPermission() {
         return checkPermission;
     }
 
@@ -91,7 +92,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     @SuppressLint("MissingPermission")
-    void startTrackingLocation(boolean needsChecking) {
+    public void startTrackingLocation(boolean needsChecking) {
         if (needsChecking) {
             checkPermission.postValue("check");
         } else {
@@ -165,5 +166,20 @@ public class HomeViewModel extends AndroidViewModel {
                 Log.e("INCIVISME", resultMessage + ". " + "Latitude = " + location.getLatitude() + ", Longitude = " + location.getLongitude(), illegalArgumentException);
             }
         });
+
     }
+
+    private MutableLiveData<FirebaseUser> user = new MutableLiveData<>();;
+
+    public LiveData<FirebaseUser> getUser() {
+        return user;
+    }
+
+    public void setUser(FirebaseUser passedUser) {
+        user.postValue(passedUser);
+    }
+
 }
+
+
+
