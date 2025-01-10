@@ -22,6 +22,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseUser;
 
 
@@ -39,6 +40,7 @@ public class SharedViewModel extends AndroidViewModel {
     private final MutableLiveData<String> checkPermission = new MutableLiveData<>();
     private final MutableLiveData<String> buttonText = new MutableLiveData<>();
     private final MutableLiveData<Boolean> progressBar = new MutableLiveData<>();
+    private final MutableLiveData<LatLng> currentLatLng = new MutableLiveData<>();
 
 
     private boolean mTrackingLocation;
@@ -185,6 +187,8 @@ public class SharedViewModel extends AndroidViewModel {
                         if (mTrackingLocation)
                             currentAddress.postValue(String.format("Direcció: %1$s \n Hora: %2$tr", finalResultMessage, System.currentTimeMillis()));
                     });
+                    LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+                    currentLatLng.postValue(latlng);
                 }
 
 
@@ -208,10 +212,9 @@ public class SharedViewModel extends AndroidViewModel {
     public void setUser(FirebaseUser passedUser) {
         user.postValue(passedUser);
     }
-
-
-
-
+    public MutableLiveData<LatLng> getCurrentLatLng() {
+        return currentLatLng;
+    }
 }
 
 
