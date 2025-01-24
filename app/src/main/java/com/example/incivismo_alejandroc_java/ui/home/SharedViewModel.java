@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+//esta clase es una clase que tengo compartida entre el homeFragment y el notifications
 public class SharedViewModel extends AndroidViewModel {
     private final Application app;
     private static final MutableLiveData<String> currentAddress = new MutableLiveData<>();

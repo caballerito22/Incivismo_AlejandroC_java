@@ -68,6 +68,7 @@ public class HomeFragment extends Fragment {
                     address, System.currentTimeMillis())
             );
         });
+        //lo se usa aqui también se puede usar en el notification
         sharedViewModel.getCurrentLatLng().observe(getViewLifecycleOwner(), latlng -> {
             binding.txtLatitud.setText(String.valueOf(latlng.latitude));
             binding.txtLongitud.setText(String.valueOf(latlng.longitude));

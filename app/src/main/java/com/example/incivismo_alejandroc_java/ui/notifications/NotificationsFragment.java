@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.incivismo_alejandroc_java.databinding.FragmentNotificationsBinding;
+import com.example.incivismo_alejandroc_java.ui.home.SharedViewModel;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -23,9 +24,14 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+
+//en el notifications hemos usado el shared y con em metodo de getCurrentLatLang hemos obtenido donde estmaos (en el mapa la flecha)
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
+
+
+    private SharedViewModel sharedViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,11 +48,30 @@ public class NotificationsFragment extends Fragment {
         binding.map.setMultiTouchControls(true);
         IMapController mapController = binding.map.getController();
         mapController.setZoom(14.5);
-        GeoPoint startPoint = new GeoPoint(39.4715612, -0.3930977);
-        mapController.setCenter(startPoint);
+
+       /* GeoPoint startPoint = new GeoPoint(39.4715612, -0.3930977);
+        mapController.setCenter(startPoint);*/
+
+        sharedViewModel = new  ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+
+        //aqui estamos obteniendo la instancia de sharedViewModel
+        //y aqui estamos obteniendo la latitud y longitud (que tembien está compartida en el homeFragment)
+        sharedViewModel.getCurrentLatLng().observe(getViewLifecycleOwner(), location -> {
+            if (location != null) {
+                // Centrar el mapa en la ubicación recibida
+                GeoPoint geoPoint = new GeoPoint(location.latitude,location.longitude);
+                mapController.setCenter(geoPoint);
+            }
+        });
 
         MyLocationNewOverlay myLocationNewOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireContext()), binding.map);
         myLocationNewOverlay.enableMyLocation();
+
+/*
+        mapController.setCenter(myLocationNewOverlay.getMyLocation());
+*/
+
         binding.map.getOverlays().add(myLocationNewOverlay);
 
         CompassOverlay compassOverlay = new CompassOverlay(requireContext(), new InternalCompassOrientationProvider(requireContext()), binding.map);
