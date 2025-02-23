@@ -115,8 +115,8 @@ public class HomeFragment extends Fragment {
             Toast.makeText(requireContext(), "getLocation: permissions granted", Toast.LENGTH_SHORT).show();
             mFusedLocationClient.requestLocationUpdates(getLocationRequest(), mLocationCallback, null);
         }
-        binding.localitzacio.setText("Carregant...");
-        binding.localitzacio.setVisibility(ProgressBar.VISIBLE);
+        binding.buttonLocation.setText("Carregant...");
+        binding.buttonLocation.setVisibility(ProgressBar.VISIBLE);
         mTrackingLocation = true;
         binding.buttonLocation.setText("Aturar el seguiment de la ubicació");
     }
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment {
 
     private void stopTrackingLocation() {
         if (mTrackingLocation) {
-            binding.localitzacio.setVisibility(ProgressBar.INVISIBLE);
+            binding.buttonLocation.setVisibility(ProgressBar.INVISIBLE);
             mTrackingLocation = false;
             binding.buttonLocation.setText("Comença a seguir la ubicació");
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -153,13 +153,13 @@ public class HomeFragment extends Fragment {
                     location -> {
                         if (location != null) {
                             mLastLocation = location;
-                            binding.localitzacio.setText(
+                            binding.buttonLocation.setText(
                                     String.format("Latitud: %1$.4f \n Longitud: %2$.4f\n Hora: %3$tr",
                                             mLastLocation.getLatitude(),
                                             mLastLocation.getLongitude(),
                                             mLastLocation.getTime()));
                         } else {
-                            binding.localitzacio.setText("Sense localització coneguda");
+                            binding.buttonLocation.setText("Sense localització coneguda");
                         }
                     });
         }
@@ -203,7 +203,7 @@ public class HomeFragment extends Fragment {
                     String finalResultMessage = resultMessage;
                     handler.post(() -> {
                         // Aquest codi s'executa en primer pla.
-                        binding.localitzacio.setText(String.format(
+                        binding.buttonLocation.setText(String.format(
                                 "Direcció: %1$s \n Hora: %2$tr",
                                 finalResultMessage, System.currentTimeMillis()));
                     });

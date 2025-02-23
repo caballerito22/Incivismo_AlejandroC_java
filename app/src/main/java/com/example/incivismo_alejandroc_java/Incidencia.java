@@ -1,11 +1,25 @@
 package com.example.incivismo_alejandroc_java;
 
-
 public class Incidencia {
     String latitud;
     String longitud;
     String direccio;
     String problema;
+    String url;
+
+
+
+    public Incidencia(String latitud, String longitud, String direccio,
+                      String problema, String url) {
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.direccio = direccio;
+        this.problema = problema;
+        this.url = url;
+    }
+
+    public Incidencia() {
+    }
 
     public String getLatitud() {
         return latitud;
@@ -39,13 +53,11 @@ public class Incidencia {
         this.problema = problema;
     }
 
-    public Incidencia(String latitud, String longitud, String direccio, String problema) {
-        this.latitud = latitud;
-        this.longitud = longitud;
-        this.direccio = direccio;
-        this.problema = problema;
+    public String getUrl() {
+        return url;
     }
 
-    public Incidencia() {
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

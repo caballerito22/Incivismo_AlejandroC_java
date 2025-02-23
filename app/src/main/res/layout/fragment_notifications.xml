@@ -15,4 +15,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/buttonFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Detener seguimiento" />
+
+    <ImageView
+        android:id="@+id/imageLocation"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_menu_mylocation"
+        app:layout_constraintTop_toBottomOf="@+id/buttonFoto"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
